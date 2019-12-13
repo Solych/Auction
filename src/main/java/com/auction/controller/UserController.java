@@ -71,13 +71,23 @@ public class UserController {
 
     @PutMapping("updateUserInfo")
     public ResponseEntity<?> updateUserInfo(@RequestBody UserUpdate userUpdate) {
-        JsonObject jsonObject = new JsonObject();
+
         try {
             userService.updateUserInfo(userUpdate);
         } catch (ConstraintViolationException ex) {
+            JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("reason", ex.getMessage());
-            return new ResponseEntity<>(jsonObject, HttpStatus.CONFLICT);
+            return new ResponseEntity<>(jsonObject.toString(), HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("getUserInfo/{userId}")
+    public ResponseEntity<?> getUserInfo(@PathVariable Integer userId) {
+        try {
+            return new ResponseEntity<>(userService.getUserInfo(userId), HttpStatus.OK);
+        } catch (UserNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

@@ -9,10 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.auction.repository.UserRepository;
 import com.auction.service.UserService;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import java.util.List;
 
 @Service
@@ -20,7 +16,6 @@ public class UserServiceImpl implements UserService {
     private static final String USER_NOT_FOUND = "User with this credentials not found";
 
     @Autowired private UserRepository userRepository;
-    @Autowired private EntityManagerFactory entityManagerFactory;
 
     public JsonObject save(UserForRegistration newUser) {
         JsonObject jsonObject = new JsonObject();
@@ -81,6 +76,7 @@ public class UserServiceImpl implements UserService {
         if (userUpdate.getCountry() != null) {
             user.setCountry(userUpdate.getCountry());
         }
+
         if(userUpdate.getName() != null) {
             user.setName(userUpdate.getName());
         }
@@ -118,6 +114,19 @@ public class UserServiceImpl implements UserService {
             throw new ConstraintViolationException("Mail");
         }
 
+    }
+
+    public GetUserUpdate getUserInfo(Integer userId) throws UserNotFoundException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Not found by id"));
+        GetUserUpdate getUserUpdate = new GetUserUpdate();
+        getUserUpdate.setCity(user.getCity());
+        getUserUpdate.setCountry(user.getCountry());
+        getUserUpdate.setMail(user.getMail());
+        getUserUpdate.setName(user.getUsername());
+        getUserUpdate.setPatronymic(user.getPatronymic());
+        getUserUpdate.setSurname(user.getSurname());
+        getUserUpdate.setPhone(user.getPhone());
+        return getUserUpdate;
     }
 
 }

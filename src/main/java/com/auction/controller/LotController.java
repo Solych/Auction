@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
+@CrossOrigin(origins = {"*"})
 @RequestMapping("/lot/")
 public class LotController {
     @Autowired private LotService lotService;
